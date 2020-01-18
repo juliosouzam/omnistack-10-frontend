@@ -1,30 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import React, { useState } from 'react';
 
-import './styles.css';
-
-export default function DevForm({ onSubmit }) {
+export default function DevForm({
+  onSubmit,
+  latitude,
+  longitude,
+  setLatitude,
+  setLongitude,
+  techs,
+  setTechs,
+}) {
   const [github_username, setGithubUsername] = useState('');
-  const [techs, setTechs] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-
-        setLatitude(latitude);
-        setLongitude(longitude);
-      },
-      err => {
-        console.log(err);
-      },
-      {
-        timeout: 3000,
-      }
-    );
-  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

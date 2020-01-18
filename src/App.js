@@ -15,6 +15,9 @@ import './Main.css';
 
 function App() {
   const [devs, setDevs] = useState([]);
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [techs, setTechs] = useState('');
 
   useEffect(() => {
     async function loadDevs() {
@@ -26,16 +29,64 @@ function App() {
     loadDevs();
   }, []);
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+
+        setLatitude(latitude);
+        setLongitude(longitude);
+      },
+      err => {
+        console.log(err);
+      },
+      {
+        timeout: 3000,
+      }
+    );
+  }, []);
+
   async function handleAddDev(data) {
     const response = await api.post('/devs', data);
 
     setDevs([...devs, response.data]);
   }
 
-  async function handleDelDev({ _id }) {
-    await api.delete(`/devs/${_id}`);
+  async function handleDelDev({ github_username }) {
+    await api.delete(`/devs/${github_username}`);
 
-    setDevs(devs.filter(d => d._id !== _id));
+    setDevs(devs.filter(d => d.github_username !== github_username));
+  }
+
+  async function handleSyncDev(dev) {
+    const response = await api.put(`/devs/${dev.github_username}`, {
+      coords: { latitude, longitude },
+      techs: techs || dev.techs.join(', '),
+    });
+
+    const {
+      _id,
+      github_username,
+      name,
+      bio,
+      avatar_url,
+      techs: newTechs,
+    } = response.data;
+
+    setDevs(
+      devs.map(dev =>
+        dev.github_username !== github_username
+          ? dev
+          : {
+              _id,
+              github_username,
+              name,
+              bio,
+              avatar_url,
+              techs: newTechs,
+            }
+      )
+    );
   }
 
   return (
@@ -43,12 +94,25 @@ function App() {
       <aside>
         <strong>Cadastrar</strong>
 
-        <DevForm onSubmit={handleAddDev} />
+        <DevForm
+          setLongitude={setLongitude}
+          setLatitude={setLatitude}
+          setTechs={setTechs}
+          latitude={latitude}
+          longitude={longitude}
+          techs={techs}
+          onSubmit={handleAddDev}
+        />
       </aside>
       <main>
         <ul>
           {devs.map(dev => (
-            <DevItem onDelete={handleDelDev} dev={dev} key={dev._id} />
+            <DevItem
+              onSyncDev={handleSyncDev}
+              onDelete={handleDelDev}
+              dev={dev}
+              key={dev._id}
+            />
           ))}
         </ul>
       </main>

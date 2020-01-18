@@ -68,3 +68,23 @@ li.dev-item a {
 li.dev-item a:hover {
   color: #5a2ea6;
 }
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+button.a-sync {
+  cursor: pointer;
+  border: 0;
+  border-radius: 4px;
+  background: rgb(21, 131, 196);
+  padding: 3px 5px;
+  color: #fff;
+  transition: background 0.2s ease-in;
+}
+
+button.a-sync:hover {
+  background: rgb(4, 77, 119);
+}

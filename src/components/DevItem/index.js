@@ -2,7 +2,7 @@ import React from 'react';
 
 import './styles.css';
 
-export default function DevItem({ dev, onDelete }) {
+export default function DevItem({ dev, onDelete, onSyncDev }) {
   return (
     <li className="dev-item">
       <div className="user-block">
@@ -18,9 +18,14 @@ export default function DevItem({ dev, onDelete }) {
         </button>
       </div>
       <p>{dev.bio}</p>
-      <a href={`https://github.com/${dev.github_username}`}>
-        Acessar perfil no github
-      </a>
+      <div className="btn-group">
+        <a href={`https://github.com/${dev.github_username}`}>
+          Acessar perfil no github
+        </a>
+        <button className="a-sync" onClick={() => onSyncDev(dev)}>
+          Sincronizar perfil
+        </button>
+      </div>
     </li>
   );
 }
