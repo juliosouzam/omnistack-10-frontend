@@ -1,4 +1,4 @@
-# Omnistack 10 - Radar Dev | Backend
+# Omnistack 10 - Radar Dev | Frontend
 
 ## Requirements
 
