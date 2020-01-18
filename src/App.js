@@ -52,10 +52,16 @@ function App() {
     setDevs([...devs, response.data]);
   }
 
-  async function handleDelDev({ github_username }) {
-    await api.delete(`/devs/${github_username}`);
+  async function handleDelDev(dev) {
+    await api.delete(`/devs/${dev.github_username}`, {
+      data: {
+        longitude: dev.location.coordinates[0],
+        latitude: dev.location.coordinates[1],
+        techs: dev.techs,
+      },
+    });
 
-    setDevs(devs.filter(d => d.github_username !== github_username));
+    setDevs(devs.filter(d => d.github_username !== dev.github_username));
   }
 
   async function handleSyncDev(dev) {
@@ -71,6 +77,7 @@ function App() {
       bio,
       avatar_url,
       techs: newTechs,
+      location,
     } = response.data;
 
     setDevs(
@@ -84,6 +91,7 @@ function App() {
               bio,
               avatar_url,
               techs: newTechs,
+              location,
             }
       )
     );
